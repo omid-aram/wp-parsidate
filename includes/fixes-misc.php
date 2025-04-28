@@ -11,8 +11,9 @@ defined( 'ABSPATH' ) or exit( 'No direct script access allowed' );
  * @subpackage      Fixes/NumbersAndArabic
  */
 
-if ( get_locale() === 'fa_IR' ) {
-	global $wpp_settings;
+global $wpp_settings;
+
+if ( get_locale() === 'fa_IR' || isset( $wpp_settings['apply_category'] )) {
 
 	if ( wpp_is_active( 'conv_page_title' ) ) {
 		add_filter( 'wp_title', 'fix_number', 1000 );
@@ -28,6 +29,7 @@ if ( get_locale() === 'fa_IR' ) {
 
 	if ( wpp_is_active( 'conv_excerpt' ) ) {
 		add_filter( 'the_excerpt', 'fix_number', 1000 );
+		add_filter( 'oceanwp_excerpt', 'fix_number', 1000 );
 	}
 
 	if ( wpp_is_active( 'conv_comments' ) ) {

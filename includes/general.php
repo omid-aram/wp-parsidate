@@ -186,6 +186,12 @@ function persian_number( $content ) {
  * @return              array|string|string[]|null
  */
 function fix_number( $content ) {
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $content;
+	}
+
 	return preg_replace_callback( '/(?:&#\d{2,4};)|(?:[0]?[a-z][\x20-\x3B=\x3F-\x7F]*)|(?<![>=<][\s*])(\b\d+\b)|<\s*[^>]+>/i', 'persian_number', $content );
 	//return preg_replace_callback( '/(?:&#\d{2,4};)|(?:[0]?[a-z][\x20-\x3B=\x3F-\x7F]*)|(\d+[\d]*)|<\s*[^>]+>/i', 'persian_number', $content );
 }

@@ -12,10 +12,10 @@ defined( 'ABSPATH' ) or exit( 'No direct script access allowed' );
 
 global $wpp_settings;
 
-if ( get_locale() === 'fa_IR' && wpp_is_active( 'persian_date' ) ) {
-	add_filter( 'the_time', 'wpp_fix_the_time', 10, 2 );
+if ( (get_locale() === 'fa_IR' || isset( $wpp_settings['apply_category'] )) && wpp_is_active( 'persian_date' ) ) {
+	add_filter( 'the_time', 'wpp_fix_post_time', 10, 2 );
 	add_filter( 'the_date', 'wpp_fix_post_date', 10, 3 );
-	add_filter( 'get_the_time', 'wpp_fix_get_the_time', 10, 3 );
+	add_filter( 'get_the_time', 'wpp_fix_post_time', 10, 2 );
 	add_filter( 'get_the_date', 'wpp_fix_post_date', 100, 3 );
 	add_filter( 'get_comment_time', 'wpp_fix_comment_time', 10, 2 );
 	add_filter( 'get_comment_date', 'wpp_fix_comment_date', 10, 2 );
@@ -56,7 +56,13 @@ function wpp_fix_post_date( $time, $format = '', $post = null ) {
 	if ( ! $post ) {
 		return $time;
 	}
+	
+	global $wpp_settings;
 
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $time;
+	}
+	
 	if ( empty( $format ) ) {
 		$format = get_option( 'date_format' );
 	}
@@ -82,44 +88,25 @@ function wpp_fix_post_modified_time( $time, $format, $gmt ) {
 	if ( ! disable_wpp() ) {
 		return $time;
 	}
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $time;
+	}
 
 	return parsidate( $format, $time, ! wpp_is_active( 'conv_dates' ) ? 'eng' : 'per' );
 }
 
 /**
- * Fixes the_time hook and returns to Jalali format
+ * Fixes post time and returns to Jalali format
  *
  * @param string $time Post time
  * @param string $format Date format
  *
  * @return          string Formatted date
  */
-function wpp_fix_the_time( $time, $format = '' ) {
-	if ( empty( $time ) ) {
-		return $time;
-	}
-
-	if ( empty( $format ) ) {
-		$format = get_option( 'time_format' );
-	}
-
-	if ( ! disable_wpp() ) {
-		return date( $format, strtotime( $time ) );
-	}
-
-	return parsidate( $format, $time, wpp_is_active( 'conv_dates' ) ? 'eng' : 'per' );
-}
-
-/**
- * Fixes get_the_time hook and returns to Jalali format
- *
- * @param string $time Post time
- * @param string $format Date format
- * @param string $post WP Post
- *
- * @return          string Formatted date
- */
-function wpp_fix_get_the_time( $time, $format = '', $post = null ) {
+function wpp_fix_post_time( $time, $format = '', $post = null ) {
 	$post = get_post( $post );
 
 	if ( ! $post ) {
@@ -127,6 +114,12 @@ function wpp_fix_get_the_time( $time, $format = '', $post = null ) {
 	}
 
 	if ( empty( $post ) ) {
+		return $time;
+	}
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
 		return $time;
 	}
 
@@ -155,6 +148,12 @@ function wpp_fix_comment_time( $time, $format = '' ) {
 	if ( empty( $comment ) ) {
 		return $time;
 	}
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $time;
+	}
 
 	if ( empty( $format ) ) {
 		$format = get_option( 'time_format' );
@@ -178,6 +177,12 @@ function wpp_fix_comment_date( $time, $format = '' ) {
 	global $comment;
 
 	if ( empty( $comment ) ) {
+		return $time;
+	}
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
 		return $time;
 	}
 
@@ -207,6 +212,12 @@ function wpp_fix_i18n( $date, $format, $timestamp, $gmt ) {
 	global $post;
 
 	//$post_id = ( is_object( $post ) && isset( $post->ID ) ) ? $post->ID : null;
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $date;
+	}
 
 	if ( ! disable_wpp() ) {
 		return $format;
@@ -228,6 +239,12 @@ function wpp_fix_i18n( $date, $format, $timestamp, $gmt ) {
 function wpp_fix_wp_date( $date, $format, $timestamp, $timezone ) {
 	if ( ! disable_wpp() ) {
 		return $format;
+	}
+	
+	global $wpp_settings;
+
+	if ( isset( $wpp_settings['apply_category'] ) && ! in_category( $wpp_settings['apply_category'] )){
+		return $date;
 	}
 
 	return parsidate( $format, $timestamp, ! wpp_is_active( 'conv_dates' ) ? 'eng' : 'per' );

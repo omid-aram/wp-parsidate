@@ -99,12 +99,16 @@ if ( ! function_exists( 'wpp_dashboard_primary_widget_content' ) ) {
                 <span><?php esc_html_e( 'What is this?', 'wp-parsidate' ); ?></span>
             </div>
             <ul>
-                <li><a href="https://wp-parsi.com/donate/" target="_blank"><span
+                <li>
+					<a href="https://wp-parsidate.ir/donate" target="_blank"><span
                                 class="dashicons dashicons-external"></span>&nbsp;<?php esc_html_e( 'Why are you showing me this?', 'wp-parsidate' ); ?>
-                    </a></li>
-                <li><a href="https://wp-parsi.com/sponser/" target="_blank"><span
+                    </a>
+				</li>
+                <li>
+					<a href="https://wp-parsidate.ir/sponser" target="_blank"><span
                                 class="dashicons dashicons-external"></span>&nbsp;<?php esc_html_e( 'How can I become a sponsor?', 'wp-parsidate' ); ?>
-                    </a></li>
+                    </a>
+				</li>
             </ul>
         </div>
         <div id="wpp_sponsorship_placeholder">
@@ -364,7 +368,7 @@ if ( ! function_exists( 'wpp_fetch_sponsorship_slides_callback' ) ) {
 
 		$slides = wp_remote_retrieve_body( $response );
 
-		set_transient( 'wpp_sponsors_cache', $slides, WEEK_IN_SECONDS );
+		set_transient( 'wpp_sponsors_cache', $slides, DAY_IN_SECONDS );
 		wp_send_json_success( json_decode( $slides, true ) );
 	}
 
